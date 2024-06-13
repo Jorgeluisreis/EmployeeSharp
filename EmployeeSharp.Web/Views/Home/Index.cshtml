@@ -1,0 +1,45 @@
+﻿@model IEnumerable<EmployeeSharp.Domain.Entities.Colaborador>
+
+<h1>Lista de Colaboradores</h1>
+
+<form asp-action="Index" method="get">
+    <div class="form-group">
+        <label for="searchInput">Pesquisar por Nome:</label>
+        <input type="text" id="searchInput" name="searchString" class="form-control" value="@ViewData["CurrentFilter"]" />
+    </div>
+    <button type="submit" class="btn btn-primary">Pesquisar</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Cargo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var colaborador in Model)
+            {
+                <tr>
+                    <td>@colaborador.Nome</td>
+                    <td>@colaborador.Email</td>
+                    <td>@colaborador.Telefone</td>
+                    <td>@colaborador.Cargo</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@colaborador.Id">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@colaborador.Id">Deletar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">Nenhum colaborador encontrado.</div>
+}

@@ -1,0 +1,33 @@
+﻿@model EmployeeSharp.Web.Models.ColaboradorViewModel
+
+<h1>Criar Novo Colaborador</h1>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Nome">Nome:</label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Telefone">Telefone:</label>
+        <input asp-for="Telefone" class="form-control" />
+        <span asp-validation-for="Telefone" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Cargo">Cargo:</label>
+        <select asp-for="Cargo" class="form-control">
+            <option value="">Selecione um cargo</option>
+            <option value="Desenvolvedor">Desenvolvedor</option>
+            <option value="Analista">Analista</option>
+            <option value="Gerente">Gerente</option>
+        </select>
+        <span asp-validation-for="Cargo" class="text-danger"></span>
+    </div>
+    <!-- Adicione aqui outros campos, se necessário -->
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
