@@ -39,7 +39,7 @@ namespace EmployeeSharp.Web.Controllers
             var cargos = await _cargoRepository.GetAllAsync();
             var viewModel = new ColaboradorViewModel
             {
-                Cargos = cargos // Passa os cargos para a view model
+                Cargos = cargos
             };
             return View(viewModel);
         }
@@ -49,7 +49,6 @@ namespace EmployeeSharp.Web.Controllers
         public async Task<IActionResult> Create(ColaboradorViewModel colaboradorViewModel)
         {
             colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
-            // Recupera o nome do cargo baseado no CargoId
             var cargo = colaboradorViewModel.Cargos.FirstOrDefault(c => c.Id == colaboradorViewModel.CargoId);
 
             ModelState.Remove("Cargos");

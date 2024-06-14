@@ -15,14 +15,5 @@ namespace EmployeeSharp.Infra.Data
 
         public DbSet<Colaborador> Colaboradores { get; set; }
         public DbSet<Cargo> Cargos { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Cargo>().HasData(
-                new Cargo { Id = 1, Nome = "Desenvolvedor" },
-                new Cargo { Id = 2, Nome = "Analista" },
-                new Cargo { Id = 3, Nome = "Gerente" }
-            );
-        }
     }
 }

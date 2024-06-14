@@ -37,7 +37,7 @@
                     </td>
                 </tr>
 
-                <!-- Modal -->
+
                 <div class="modal fade" id="deleteModal_@colaborador.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel_@colaborador.Id" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -68,13 +68,12 @@ else
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Abrir modal ao clicar em Deletar
+
             $(".delete-link").click(function () {
                 var id = $(this).data("id");
                 $('#deleteModal_' + id).modal('show');
             });
 
-            // Confirmar exclusão
             $(".confirmDelete").click(function () {
                 var id = $(this).data("id");
                 $.ajax({
@@ -99,7 +98,6 @@ else
                 });
             });
 
-            // Fechar modal ao clicar em Cancelar
             $(".cancel-button").click(function () {
                 var id = $(this).data("id");
                 $('#deleteModal_' + id).modal('hide');
