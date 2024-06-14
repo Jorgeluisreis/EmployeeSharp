@@ -20,7 +20,9 @@ jobs:
 
     - name: Extract repository name
       id: extract_repo
-      run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+      run: |
+        REPO_NAME=${GITHUB_REPOSITORY##*/}
+        echo "REPO_NAME=${REPO_NAME,,}" >> $GITHUB_ENV
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v5.4.0
