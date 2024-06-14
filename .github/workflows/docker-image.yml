@@ -28,4 +28,4 @@ jobs:
         context: .
         file: EmployeeSharp.Web/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/$(echo ${{ env.REPO_NAME }}):latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:latest
