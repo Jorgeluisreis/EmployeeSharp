@@ -9,11 +9,12 @@ namespace EmployeeSharp.Domain.Interfaces
 {
     public interface ICargoRepository
     {
-        Task<Cargo> GetByIdAsync(int id);
-        Task<Cargo> GetByNameAsync(string name);
+        Task<bool> AnyAsync();
         Task<IEnumerable<Cargo>> GetAllAsync();
-        Task AddAsync(Cargo entity);
-        Task UpdateAsync(Cargo entity);
+        Task<Cargo> GetByIdAsync(int id);
+        Task AddAsync(Cargo cargo);
+        Task UpdateAsync(Cargo cargo);
         Task DeleteAsync(int id);
+        Task<Cargo> GetByNameAsync(string name);
     }
 }

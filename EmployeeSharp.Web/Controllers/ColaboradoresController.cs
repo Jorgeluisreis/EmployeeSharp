@@ -34,22 +34,31 @@ namespace EmployeeSharp.Web.Controllers
 
 
         // GET: /Colaboradores/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View("Create");
+            var cargos = await _cargoRepository.GetAllAsync();
+            var viewModel = new ColaboradorViewModel
+            {
+                Cargos = cargos // Passa os cargos para a view model
+            };
+            return View(viewModel);
         }
 
-        // POST: /Colaboradores/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ColaboradorViewModel colaboradorViewModel)
         {
+            colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
+            // Recupera o nome do cargo baseado no CargoId
+            var cargo = colaboradorViewModel.Cargos.FirstOrDefault(c => c.Id == colaboradorViewModel.CargoId);
+
+            ModelState.Remove("Cargos");
             if (ModelState.IsValid)
             {
-                var cargo = await _cargoRepository.GetByNameAsync(colaboradorViewModel.Cargo);
                 if (cargo == null)
                 {
-                    ModelState.AddModelError("Cargo", "Cargo não encontrado.");
+                    ModelState.AddModelError("CargoId", "Cargo não encontrado.");
+                    colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
                     return View(colaboradorViewModel);
                 }
 
@@ -66,6 +75,8 @@ namespace EmployeeSharp.Web.Controllers
             }
             return View(colaboradorViewModel);
         }
+
+
 
         // GET: /Colaboradores/Edit/5
         public async Task<IActionResult> Edit(int id)

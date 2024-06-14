@@ -15,24 +15,25 @@ namespace EmployeeSharp.Infra.Data.Repositories
             _context = context;
         }
 
-        public async Task<Cargo> GetByIdAsync(int id)
-        {
-            return await _context.Cargos.FindAsync(id);
-        }
-
         public async Task<IEnumerable<Cargo>> GetAllAsync()
         {
             return await _context.Cargos.ToListAsync();
         }
 
-        public async Task<Cargo> GetByNameAsync(string nome)
+        public async Task<Cargo> GetByIdAsync(int id)
         {
-            return await _context.Cargos.FirstOrDefaultAsync(c => c.Nome == nome);
+            return await _context.Cargos.FindAsync(id);
         }
 
         public async Task AddAsync(Cargo cargo)
         {
             _context.Cargos.Add(cargo);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Cargo cargo)
+        {
+            _context.Cargos.Update(cargo);
             await _context.SaveChangesAsync();
         }
 
@@ -46,10 +47,14 @@ namespace EmployeeSharp.Infra.Data.Repositories
             }
         }
 
-        public async Task UpdateAsync(Cargo cargo)
+        public async Task<Cargo> GetByNameAsync(string name)
         {
-            _context.Entry(cargo).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            return await _context.Cargos.FirstOrDefaultAsync(c => c.Nome == name);
+        }
+
+        public async Task<bool> AnyAsync()
+        {
+            return await _context.Cargos.AnyAsync();
         }
     }
 }
