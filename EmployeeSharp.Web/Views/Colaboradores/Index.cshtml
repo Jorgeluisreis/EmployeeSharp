@@ -1,0 +1,107 @@
+﻿@model IEnumerable<EmployeeSharp.Domain.Entities.Colaborador>
+
+<h1>Lista de Colaboradores</h1>
+
+<form asp-controller="Colaboradores" asp-action="Index" method="get">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="searchInput">Pesquisar por Nome:</label>
+        <input type="text" id="searchInput" name="searchString" class="form-control" value="@ViewData["CurrentFilter"]" />
+    </div>
+    <button type="submit" class="btn btn-primary">Pesquisar</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Cargo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var colaborador in Model)
+            {
+                <tr>
+                    <td>@colaborador.Nome</td>
+                    <td>@colaborador.Email</td>
+                    <td>@colaborador.Telefone</td>
+                    <td>@colaborador.Cargo.Nome</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@colaborador.Id" class="btn btn-info">Editar</a>
+                        <a href="#" class="delete-link btn btn-danger" data-id="@colaborador.Id" data-nome="@colaborador.Nome">Deletar</a>
+                    </td>
+                </tr>
+
+
+                <div class="modal fade" id="deleteModal_@colaborador.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel_@colaborador.Id" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel_@colaborador.Id">Deletar Colaborador</h5>
+                            </div>
+                            <div class="modal-body" id="deleteModalContent_@colaborador.Id">
+                                <p>Tem certeza que deseja excluir o colaborador '@colaborador.Nome'?</p>
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-secondary cancel-button" data-id="@colaborador.Id">Cancelar</button>
+                                    <button type="button" class="btn btn-danger confirmDelete" data-id="@colaborador.Id">Confirmar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">Nenhum colaborador encontrado.</div>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $(".delete-link").click(function () {
+                var id = $(this).data("id");
+                $('#deleteModal_' + id).modal('show');
+            });
+
+            $(".confirmDelete").click(function () {
+                var id = $(this).data("id");
+                $.ajax({
+                    url: '/Colaboradores/DeleteConfirmed',
+                    type: 'POST',
+                    data: { id: id },
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#deleteModal_' + id).modal('hide');
+                            location.reload();
+                        } else {
+                            alert("Erro ao deletar o colaborador.");
+                        }
+                    },
+                    error: function (error) {
+                        console.error(error);
+                        alert("Erro ao deletar o colaborador.");
+                    }
+                });
+            });
+
+            $(".cancel-button").click(function () {
+                var id = $(this).data("id");
+                $('#deleteModal_' + id).modal('hide');
+            });
+        });
+    </script>
+}

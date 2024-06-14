@@ -1,0 +1,409 @@
+# Build Folders (The compiled output)
+bin/
+obj/
+
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+.vscode/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio
+.localhistory
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Rider DotNet Core Debugger history
+.rider/
+
+# Rider directories
+.idea/
+.idea/*
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Node.js
+node_modules/
+
+# Packages directory
+.vscode-test
+
+# Windows
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio
+.localhistory
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Rider directories
+.idea/
+.idea/*
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Node.js
+node_modules/
+
+# Windows
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio
+.localhistory
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Rider directories
+.idea/
+.idea/*
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Node.js
+node_modules/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+
+# .NET Core Build artifacts
+artifacts/
+
+# Ignore web.config, if you have it committed in the repository
+# Otherwise, remove this line
+web.config
+
+# IIS Express Logs
+IISExpress/logs/
+IISExpress/config/
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Azure Web Apps settings
+.ara
+.msbuild
+.publish*
+.vspscc
+.vssscc
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Rider DotNet Core Debugger history
+.rider/
+
+# Rider directories
+.idea/
+.idea/*
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Node.js
+node_modules/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+
+# .NET Core Build artifacts
+artifacts/
+
+# Ignore web.config, if you have it committed in the repository
+# Otherwise, remove this line
+web.config
+
+# IIS Express Logs
+IISExpress/logs/
+IISExpress/config/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Rider DotNet Core Debugger history
+.rider/
+
+# Rider directories
+.idea/
+.idea/*
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Node.js
+node_modules/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+
+# .NET Core Build artifacts
+artifacts/
+
+# Ignore web.config, if you have it committed in the repository
+# Otherwise, remove this line
+web.config
+
+# IIS Express Logs
+IISExpress/logs/
+IISExpress/config/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio
+.localhistory
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Rider directories
+.idea/
+.idea/*
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.json
+*.rptproj.rsuser
+
+# Node.js
+node_modules/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+
+# .NET Core Build artifacts
+artifacts/
+
+# Ignore web.config, if you have it committed in the repository
+# Otherwise, remove this line
+web.config
+
+# IIS Express Logs
+IISExpress/logs/
+IISExpress/config/

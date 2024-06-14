@@ -1,0 +1,13 @@
+﻿@model EmployeeSharp.Domain.Entities.Cargo
+
+<h1>Deletar Cargo</h1>
+
+<div>
+    <h4>Tem certeza que deseja deletar este cargo?</h4>
+    <h3>@Model.Nome</h3>
+    <form asp-action="DeleteConfirmed">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Deletar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
