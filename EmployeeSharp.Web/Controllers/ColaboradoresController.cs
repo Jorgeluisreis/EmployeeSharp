@@ -3,8 +3,9 @@ using EmployeeSharp.Application.Services;
 using EmployeeSharp.Domain.Entities;
 using EmployeeSharp.Web.Models;
 using EmployeeSharp.Domain.Interfaces;
-using EmployeeSharp.Infra.Data.Repositories;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeSharp.Web.Controllers
 {
@@ -24,14 +25,13 @@ namespace EmployeeSharp.Web.Controllers
         {
             var colaboradores = await _colaboradorService.GetAllAsync();
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 colaboradores = colaboradores.Where(c => c.Nome.Contains(searchString));
             }
 
             return View(colaboradores);
         }
-
 
         // GET: /Colaboradores/Create
         public async Task<IActionResult> Create()
@@ -75,8 +75,6 @@ namespace EmployeeSharp.Web.Controllers
             return View(colaboradorViewModel);
         }
 
-
-
         // GET: /Colaboradores/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
@@ -85,25 +83,69 @@ namespace EmployeeSharp.Web.Controllers
             {
                 return NotFound();
             }
-            return View(colaborador);
+
+            var cargos = await _cargoRepository.GetAllAsync();
+            var viewModel = new ColaboradorViewModel
+            {
+                Id = colaborador.Id,
+                Nome = colaborador.Nome,
+                Email = colaborador.Email,
+                Telefone = colaborador.Telefone,
+                CargoId = colaborador.CargoId,
+                Cargos = cargos
+            };
+
+            return PartialView("Edit", viewModel);
         }
 
         // POST: /Colaboradores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Colaborador colaborador)
+        public async Task<IActionResult> Edit(int id, ColaboradorViewModel viewModel)
         {
-            if (id != colaborador.Id)
+            if (id != viewModel.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
-                await _colaboradorService.UpdateAsync(colaborador);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var cargo = await _cargoRepository.GetByIdAsync(viewModel.CargoId);
+                    if (cargo == null)
+                    {
+                        ModelState.AddModelError("CargoId", "Cargo não encontrado.");
+                        return PartialView("Edit", viewModel);
+                    }
+
+                    var colaborador = new Colaborador
+                    {
+                        Id = viewModel.Id,
+                        Nome = viewModel.Nome,
+                        Email = viewModel.Email,
+                        Telefone = viewModel.Telefone,
+                        Cargo = cargo
+                    };
+
+                    await _colaboradorService.UpdateAsync(colaborador);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await _colaboradorService.ColaboradorExists(viewModel.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
             }
-            return View(colaborador);
+
+            viewModel.Cargos = await _cargoRepository.GetAllAsync();
+            return PartialView("Edit", viewModel);
         }
 
         // GET: /Colaboradores/Delete/5
@@ -131,8 +173,5 @@ namespace EmployeeSharp.Web.Controllers
             await _colaboradorService.DeleteAsync(id);
             return Json(new { success = true });
         }
-
-
-
     }
 }
