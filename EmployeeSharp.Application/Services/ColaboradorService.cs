@@ -53,5 +53,11 @@ namespace EmployeeSharp.Application.Services
         {
             return await _cargoRepository.GetAllAsync();
         }
+
+        public async Task<bool> ColaboradorExists(int id)
+        {
+            var colaborador = await _colaboradorRepository.GetByIdAsync(id);
+            return colaborador != null;
+        }
     }
 }

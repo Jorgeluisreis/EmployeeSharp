@@ -32,11 +32,10 @@
                     <td>@colaborador.Telefone</td>
                     <td>@colaborador.Cargo.Nome</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@colaborador.Id" class="btn btn-info">Editar</a>
+                        <button class="btn btn-info edit-button" data-id="@colaborador.Id">Editar</button>
                         <a href="#" class="delete-link btn btn-danger" data-id="@colaborador.Id" data-nome="@colaborador.Nome">Deletar</a>
                     </td>
                 </tr>
-
 
                 <div class="modal fade" id="deleteModal_@colaborador.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel_@colaborador.Id" aria-hidden="true">
                     <div class="modal-dialog" role="document">
@@ -63,11 +62,42 @@ else
     <div class="alert alert-warning" role="alert">Nenhum colaborador encontrado.</div>
 }
 
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
+            $(".edit-button").click(function () {
+                var id = $(this).data("id");
+                $.get('/Colaboradores/Edit/' + id, function (data) {
+                    $('#editModal .modal-content').html(data);
+                    $('#editModal').modal('show');
+                });
+            });
+
+            $("#editModal").on('submit', '#editColaboradorForm', function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function (response) {
+                        console.error("Erro ao salvar as alterações.");
+                    }
+                });
+            });
 
             $(".delete-link").click(function () {
                 var id = $(this).data("id");
@@ -96,11 +126,6 @@ else
                         alert("Erro ao deletar o colaborador.");
                     }
                 });
-            });
-
-            $(".cancel-button").click(function () {
-                var id = $(this).data("id");
-                $('#deleteModal_' + id).modal('hide');
             });
         });
     </script>
