@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmployeeSharp.Application.Services;
 using EmployeeSharp.Domain.Entities;
-using EmployeeSharp.Web.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace EmployeeSharp.Web.Controllers
@@ -9,10 +9,34 @@ namespace EmployeeSharp.Web.Controllers
     public class CargosController : Controller
     {
         private readonly CargoService _cargoService;
+        private readonly ColaboradorService _colaboradorService;
 
-        public CargosController(CargoService cargoService)
+        public CargosController(CargoService cargoService, ColaboradorService colaboradorService)
         {
             _cargoService = cargoService;
+            _colaboradorService = colaboradorService;
+        }
+
+        [HttpGet]
+        [Route("Cargos/GetCargoName/{id}")]
+        public async Task<IActionResult> GetCargoName(int id)
+        {
+            try
+            {
+                var cargo = await _cargoService.GetByIdAsync(id);
+                if (cargo != null)
+                {
+                    return Ok(cargo.Nome);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
+            }
         }
 
         public async Task<IActionResult> Index()
@@ -23,7 +47,7 @@ namespace EmployeeSharp.Web.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            return PartialView();
         }
 
         [HttpPost]
@@ -35,7 +59,7 @@ namespace EmployeeSharp.Web.Controllers
                 await _cargoService.AddAsync(cargo);
                 return RedirectToAction(nameof(Index));
             }
-            return View(cargo);
+            return PartialView(cargo);
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -45,7 +69,7 @@ namespace EmployeeSharp.Web.Controllers
             {
                 return NotFound();
             }
-            return View(cargo);
+            return PartialView("Edit", cargo);
         }
 
         [HttpPost]
@@ -62,7 +86,7 @@ namespace EmployeeSharp.Web.Controllers
                 await _cargoService.UpdateAsync(cargo);
                 return RedirectToAction(nameof(Index));
             }
-            return View(cargo);
+            return PartialView(cargo);
         }
 
         public async Task<IActionResult> Delete(int id)
@@ -72,15 +96,32 @@ namespace EmployeeSharp.Web.Controllers
             {
                 return NotFound();
             }
-            return View(cargo);
+            return PartialView(cargo);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _cargoService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var colaboradores = await _colaboradorService.GetByCargoIdAsync(id);
+                foreach (var colaborador in colaboradores)
+                {
+                    colaborador.CargoId = null;
+                    await _colaboradorService.UpdateAsync(colaborador);
+                }
+
+                await _cargoService.DeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Erro ao deletar o cargo: {ex.Message}");
+                return RedirectToAction(nameof(Index));
+            }
         }
+
     }
+
 }

@@ -3,9 +3,6 @@ using EmployeeSharp.Domain.Interfaces;
 using EmployeeSharp.Infra.Data.Repositories;
 using EmployeeSharp.Application.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 

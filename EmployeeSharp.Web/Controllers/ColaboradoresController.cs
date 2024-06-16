@@ -49,24 +49,29 @@ namespace EmployeeSharp.Web.Controllers
         public async Task<IActionResult> Create(ColaboradorViewModel colaboradorViewModel)
         {
             colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
+
+            if (colaboradorViewModel.CargoId == null)
+            {
+                ModelState.AddModelError("CargoId", "O campo Cargo é obrigatório.");
+                return View(colaboradorViewModel);
+            }
+
             var cargo = colaboradorViewModel.Cargos.FirstOrDefault(c => c.Id == colaboradorViewModel.CargoId);
 
-            ModelState.Remove("Cargos");
+            if (cargo == null)
+            {
+                ModelState.AddModelError("CargoId", "Cargo não encontrado.");
+                return View(colaboradorViewModel);
+            }
+
             if (ModelState.IsValid)
             {
-                if (cargo == null)
-                {
-                    ModelState.AddModelError("CargoId", "Cargo não encontrado.");
-                    colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
-                    return View(colaboradorViewModel);
-                }
-
                 var colaborador = new Colaborador
                 {
                     Nome = colaboradorViewModel.Nome,
                     Email = colaboradorViewModel.Email,
                     Telefone = colaboradorViewModel.Telefone,
-                    Cargo = cargo
+                    CargoId = colaboradorViewModel.CargoId
                 };
 
                 await _colaboradorService.AddAsync(colaborador);
@@ -74,6 +79,7 @@ namespace EmployeeSharp.Web.Controllers
             }
             return View(colaboradorViewModel);
         }
+
 
         // GET: /Colaboradores/Edit/5
         public async Task<IActionResult> Edit(int id)
@@ -98,6 +104,7 @@ namespace EmployeeSharp.Web.Controllers
             return PartialView("Edit", viewModel);
         }
 
+
         // POST: /Colaboradores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -112,10 +119,14 @@ namespace EmployeeSharp.Web.Controllers
             {
                 try
                 {
-                    var cargo = await _cargoRepository.GetByIdAsync(viewModel.CargoId);
-                    if (cargo == null)
+                    var cargo = viewModel.CargoId.HasValue
+                                ? await _cargoRepository.GetByIdAsync(viewModel.CargoId.Value)
+                                : null;
+
+                    if (viewModel.CargoId.HasValue && cargo == null)
                     {
                         ModelState.AddModelError("CargoId", "Cargo não encontrado.");
+                        viewModel.Cargos = await _cargoRepository.GetAllAsync();
                         return PartialView("Edit", viewModel);
                     }
 
@@ -125,7 +136,7 @@ namespace EmployeeSharp.Web.Controllers
                         Nome = viewModel.Nome,
                         Email = viewModel.Email,
                         Telefone = viewModel.Telefone,
-                        Cargo = cargo
+                        CargoId = viewModel.CargoId 
                     };
 
                     await _colaboradorService.UpdateAsync(colaborador);
@@ -147,6 +158,8 @@ namespace EmployeeSharp.Web.Controllers
             viewModel.Cargos = await _cargoRepository.GetAllAsync();
             return PartialView("Edit", viewModel);
         }
+
+
 
         // GET: /Colaboradores/Delete/5
         public async Task<IActionResult> Delete(int id)

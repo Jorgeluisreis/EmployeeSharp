@@ -1,12 +1,16 @@
 ﻿@model EmployeeSharp.Domain.Entities.Cargo
 
-<h1>Criar Novo Cargo</h1>
-
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="Nome">Nome:</label>
-        <input asp-for="Nome" class="form-control" />
-        <span asp-validation-for="Nome" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Salvar</button>
-</form>
+<div class="modal-header">
+    <h5 class="modal-title" id="createModalLabel">Adicionar Novo Cargo</h5>
+</div>
+<div class="modal-body">
+    <form id="createCargoForm" asp-action="Create" data-ajax="true" data-ajax-method="POST">
+        <div class="form-group">
+            <label asp-for="Nome">Nome:</label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button type="button" class="btn btn-secondary" id="cancelCreateButton" data-dismiss="modal">Cancelar</button>
+    </form>
+</div>

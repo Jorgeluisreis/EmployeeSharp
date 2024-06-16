@@ -20,9 +20,8 @@ namespace EmployeeSharp.Web.Models
         [Phone(ErrorMessage = "O Telefone não é válido.")]
         public string Telefone { get; set; }
 
-        [Required(ErrorMessage = "O campo Cargo é obrigatório.")]
         [Display(Name = "Cargo")]
-        public int CargoId { get; set; }
+        public int? CargoId { get; set; }
 
         public IEnumerable<Cargo> Cargos { get; set; }
     }
