@@ -1,8 +1,6 @@
 ﻿using EmployeeSharp.Domain.Entities;
 using EmployeeSharp.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace EmployeeSharp.Infra.Data.Repositories
 {
