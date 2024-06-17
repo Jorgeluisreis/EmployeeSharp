@@ -3,9 +3,9 @@ using EmployeeSharp.Application.Services;
 using EmployeeSharp.Domain.Entities;
 using EmployeeSharp.Web.Models;
 using EmployeeSharp.Domain.Interfaces;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using EmployeeSharp.Application.Validators;
+using FluentValidation;
 
 namespace EmployeeSharp.Web.Controllers
 {
@@ -13,11 +13,13 @@ namespace EmployeeSharp.Web.Controllers
     {
         private readonly ColaboradorService _colaboradorService;
         private readonly ICargoRepository _cargoRepository;
+        private readonly ColaboradorValidator _colaboradorValidator;
 
-        public ColaboradoresController(ColaboradorService colaboradorService, ICargoRepository cargoRepository)
+        public ColaboradoresController(ColaboradorService colaboradorService, ICargoRepository cargoRepository, ColaboradorValidator colaboradorValidator)
         {
             _colaboradorService = colaboradorService;
             _cargoRepository = cargoRepository;
+            _colaboradorValidator = colaboradorValidator;
         }
 
         // GET: /Colaboradores/Index
@@ -48,24 +50,12 @@ namespace EmployeeSharp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ColaboradorViewModel colaboradorViewModel)
         {
+
             colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
-
-            if (colaboradorViewModel.CargoId == null)
-            {
-                ModelState.AddModelError("CargoId", "O campo Cargo é obrigatório.");
-                return View(colaboradorViewModel);
-            }
-
-            var cargo = colaboradorViewModel.Cargos.FirstOrDefault(c => c.Id == colaboradorViewModel.CargoId);
-
-            if (cargo == null)
-            {
-                ModelState.AddModelError("CargoId", "Cargo não encontrado.");
-                return View(colaboradorViewModel);
-            }
 
             if (ModelState.IsValid)
             {
+
                 var colaborador = new Colaborador
                 {
                     Nome = colaboradorViewModel.Nome,
@@ -74,11 +64,26 @@ namespace EmployeeSharp.Web.Controllers
                     CargoId = colaboradorViewModel.CargoId
                 };
 
+                var validationResult = await _colaboradorValidator.ValidateAsync(colaborador);
+
+                if (!validationResult.IsValid)
+                {
+
+                    foreach (var error in validationResult.Errors)
+                    {
+                        ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    }
+
+                    return View(colaboradorViewModel);
+                }
+
                 await _colaboradorService.AddAsync(colaborador);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(colaboradorViewModel);
         }
+
 
 
         // GET: /Colaboradores/Edit/5
@@ -136,7 +141,7 @@ namespace EmployeeSharp.Web.Controllers
                         Nome = viewModel.Nome,
                         Email = viewModel.Email,
                         Telefone = viewModel.Telefone,
-                        CargoId = viewModel.CargoId 
+                        CargoId = viewModel.CargoId
                     };
 
                     await _colaboradorService.UpdateAsync(colaborador);

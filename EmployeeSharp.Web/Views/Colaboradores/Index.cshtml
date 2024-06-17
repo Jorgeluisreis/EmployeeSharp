@@ -128,29 +128,25 @@ else
                 });
             });
 
-            // Função para buscar o nome do cargo
             function FindCargoName(cargoId) {
-                var cargoName = ""; // Inicialize uma variável para armazenar o nome do cargo
+                var cargoName = "";
 
-                // Faça uma requisição para obter o nome do cargo pelo ID
                 $.ajax({
                     url: '/Cargos/GetCargoName/' + cargoId,
                     type: 'GET',
-                    async: false, // Defina como false para garantir que a função aguarde a resposta da requisição
+                    async: false,
                     success: function (data) {
-                        cargoName = data; // Armazene o nome do cargo retornado pela requisição na variável
+                        cargoName = data;
                     },
                     error: function () {
                         console.error("Erro ao buscar o nome do cargo.");
-                        cargoName = "Cargo não cadastrado"; // Defina o nome do cargo como "Cargo não cadastrado" em caso de erro
+                        cargoName = "Cargo não cadastrado";
                     }
                 });
 
-                // Retorne o nome do cargo, se encontrado, ou "Cargo não cadastrado" se não encontrado
                 return cargoName;
             }
 
-            // Preencher os campos de cargo na tabela
             $('.cargo-name').each(function () {
                 var cargoId = $(this).data('cargo-id');
                 $(this).text(FindCargoName(cargoId));

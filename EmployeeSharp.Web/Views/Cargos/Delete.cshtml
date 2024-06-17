@@ -2,13 +2,16 @@
 
 <div class="modal-header">
     <h5 class="modal-title" id="deleteModalLabel">Deletar Cargo</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 <div class="modal-body">
-    <h6>Tem certeza que deseja deletar este cargo?</h6>
+    <p>Tem certeza que deseja deletar este cargo?</p>
     <h5 class="text-muted">@Model.Nome</h5>
     <form id="deleteCargoForm" asp-action="DeleteConfirmed">
         <input type="hidden" asp-for="Id" />
-        <div class="form-group">
+        <div class="form-group text-right">
             <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
             <button type="button" id="cancelDeleteButton" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
         </div>
