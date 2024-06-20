@@ -43,7 +43,7 @@ namespace EmployeeSharp.Web.Controllers
             {
                 Cargos = cargos
             };
-            return View(viewModel);
+            return PartialView("Create", viewModel);
         }
 
         [HttpPost]
@@ -74,14 +74,14 @@ namespace EmployeeSharp.Web.Controllers
                         ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                     }
 
-                    return View(colaboradorViewModel);
+                    return PartialView("Create", colaboradorViewModel);
                 }
 
                 await _colaboradorService.AddAsync(colaborador);
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
             }
 
-            return View(colaboradorViewModel);
+            return PartialView("Create", colaboradorViewModel);
         }
 
 

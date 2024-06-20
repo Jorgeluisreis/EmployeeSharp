@@ -9,6 +9,8 @@
         <input type="text" id="searchInput" name="searchString" class="form-control" value="@ViewData["CurrentFilter"]" />
     </div>
     <button type="submit" class="btn btn-primary">Pesquisar</button>
+
+    <button type="button" class="btn btn-success" id="createButton">Criar Colaborador</button>
 </form>
 
 @if (Model != null && Model.Any())
@@ -45,6 +47,14 @@ else
     <div class="alert alert-warning" role="alert">Nenhum colaborador encontrado.</div>
 }
 
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -67,7 +77,6 @@ else
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Edit button click event
             $(".edit-button").click(function () {
                 var id = $(this).data("id");
                 $.get('/Colaboradores/Edit/' + id, function (data) {
@@ -76,7 +85,6 @@ else
                 });
             });
 
-            // Handle edit form submission
             $("#editModal").on('submit', '#editColaboradorForm', function (event) {
                 event.preventDefault();
                 var form = $(this);
@@ -97,7 +105,6 @@ else
                 $('#editModal').modal('hide');
             });
 
-            // Delete button click event
             $(".delete-button").click(function () {
                 var id = $(this).data("id");
                 $.get('/Colaboradores/Delete/' + id, function (data) {
@@ -106,7 +113,6 @@ else
                 });
             });
 
-            // Handle delete confirmation
             $(document).on('click', '.confirmDelete', function () {
                 var id = $(this).data("id");
                 $.ajax({
@@ -135,6 +141,38 @@ else
                 $('#deleteModal').modal('hide');
             });
 
+            $("#createButton").click(function () {
+                $.get('/Colaboradores/Create', function (data) {
+                    $('#createModal .modal-content').html(data);
+                    $('#createModal').modal('show');
+                });
+            });
+
+            $("#createModal").on('submit', '#createColaboradorForm', function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = '/Colaboradores/Index';
+                        } else {
+                            $('#createModal .modal-content').html(response);
+                        }
+                    },
+                    error: function (response) {
+                        console.error("Erro ao criar o colaborador.");
+                        $('#createModal .modal-content').html(response.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '#closeCreateModal', function () {
+                $('#createModal').modal('hide');
+            });
+
             function FindCargoName(cargoId) {
                 var cargoName = "";
 
@@ -154,7 +192,6 @@ else
                 return cargoName;
             }
 
-            // Set cargo names
             $('.cargo-name').each(function () {
                 var cargoId = $(this).data('cargo-id');
                 $(this).text(FindCargoName(cargoId));
