@@ -33,26 +33,9 @@
                     <td class="cargo-name" data-cargo-id="@colaborador.CargoId"></td>
                     <td>
                         <button class="btn btn-info edit-button" data-id="@colaborador.Id">Editar</button>
-                        <a href="#" class="delete-link btn btn-danger" data-id="@colaborador.Id" data-nome="@colaborador.Nome">Deletar</a>
+                        <button class="btn btn-danger delete-button" data-id="@colaborador.Id" data-nome="@colaborador.Nome">Deletar</button>
                     </td>
                 </tr>
-
-                <div class="modal fade" id="deleteModal_@colaborador.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel_@colaborador.Id" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel_@colaborador.Id">Deletar Colaborador</h5>
-                            </div>
-                            <div class="modal-body" id="deleteModalContent_@colaborador.Id">
-                                <p>Tem certeza que deseja excluir o colaborador '@colaborador.Nome'?</p>
-                                <div class="text-right">
-                                    <button type="button" class="btn btn-secondary cancel-button" data-id="@colaborador.Id">Cancelar</button>
-                                    <button type="button" class="btn btn-danger confirmDelete" data-id="@colaborador.Id">Confirmar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             }
         </tbody>
     </table>
@@ -70,11 +53,21 @@ else
     </div>
 </div>
 
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Edit button click event
             $(".edit-button").click(function () {
                 var id = $(this).data("id");
                 $.get('/Colaboradores/Edit/' + id, function (data) {
@@ -83,6 +76,7 @@ else
                 });
             });
 
+            // Handle edit form submission
             $("#editModal").on('submit', '#editColaboradorForm', function (event) {
                 event.preventDefault();
                 var form = $(this);
@@ -99,12 +93,17 @@ else
                 });
             });
 
-            $(".delete-link").click(function () {
+            // Delete button click event
+            $(".delete-button").click(function () {
                 var id = $(this).data("id");
-                $('#deleteModal_' + id).modal('show');
+                $.get('/Colaboradores/Delete/' + id, function (data) {
+                    $('#deleteModal .modal-content').html(data);
+                    $('#deleteModal').modal('show');
+                });
             });
 
-            $(".confirmDelete").click(function () {
+            // Handle delete confirmation
+            $(document).on('click', '.confirmDelete', function () {
                 var id = $(this).data("id");
                 $.ajax({
                     url: '/Colaboradores/DeleteConfirmed',
@@ -115,7 +114,7 @@ else
                     },
                     success: function (data) {
                         if (data.success) {
-                            $('#deleteModal_' + id).modal('hide');
+                            $('#deleteModal').modal('hide');
                             location.reload();
                         } else {
                             alert("Erro ao deletar o colaborador.");
@@ -126,6 +125,10 @@ else
                         alert("Erro ao deletar o colaborador.");
                     }
                 });
+            });
+
+            $(document).on('click', '#closeDeleteModal', function () {
+                $('#deleteModal').modal('hide');
             });
 
             function FindCargoName(cargoId) {
@@ -147,6 +150,7 @@ else
                 return cargoName;
             }
 
+            // Set cargo names
             $('.cargo-name').each(function () {
                 var cargoId = $(this).data('cargo-id');
                 $(this).text(FindCargoName(cargoId));

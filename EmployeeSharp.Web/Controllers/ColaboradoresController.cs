@@ -174,7 +174,7 @@ namespace EmployeeSharp.Web.Controllers
             {
                 return NotFound();
             }
-            return View(colaborador);
+            return PartialView("Delete", colaborador);
         }
 
         // POST: /Colaboradores/DeleteConfirmed
