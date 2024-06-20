@@ -22,7 +22,7 @@
 
     <div class="form-group">
         <label asp-for="Telefone">Telefone:</label>
-        <input asp-for="Telefone" class="form-control" />
+        <input asp-for="Telefone" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
         <span asp-validation-for="Telefone" class="text-danger"></span>
     </div>
 
@@ -54,3 +54,15 @@
         <button type="button" class="btn btn-secondary" id="closeEditModal">Cancelar</button>
     </div>
 </form>
+
+@section scripts {
+       <script>
+        document.querySelector('form').addEventListener('keypress', function (event) {
+            if (event.target.getAttribute('name') === 'Telefone') {
+                if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                }
+            }
+        });
+       </script>
+}

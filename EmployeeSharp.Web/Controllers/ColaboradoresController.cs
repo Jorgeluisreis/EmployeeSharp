@@ -120,48 +120,61 @@ namespace EmployeeSharp.Web.Controllers
                 return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            viewModel.Cargos = await _cargoRepository.GetAllAsync();
+
+
+            var colaborador = new Colaborador
             {
-                try
+                Id = viewModel.Id,
+                Nome = viewModel.Nome,
+                Email = viewModel.Email,
+                Telefone = viewModel.Telefone,
+                CargoId = viewModel.CargoId ?? 0
+            };
+
+            var validationResult = await _colaboradorValidator.ValidateAsync(colaborador);
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
                 {
-                    var cargo = viewModel.CargoId.HasValue
-                                ? await _cargoRepository.GetByIdAsync(viewModel.CargoId.Value)
-                                : null;
-
-                    if (viewModel.CargoId.HasValue && cargo == null)
-                    {
-                        ModelState.AddModelError("CargoId", "Cargo não encontrado.");
-                        viewModel.Cargos = await _cargoRepository.GetAllAsync();
-                        return PartialView("Edit", viewModel);
-                    }
-
-                    var colaborador = new Colaborador
-                    {
-                        Id = viewModel.Id,
-                        Nome = viewModel.Nome,
-                        Email = viewModel.Email,
-                        Telefone = viewModel.Telefone,
-                        CargoId = viewModel.CargoId
-                    };
-
-                    await _colaboradorService.UpdateAsync(colaborador);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await _colaboradorService.ColaboradorExists(viewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 }
             }
 
-            viewModel.Cargos = await _cargoRepository.GetAllAsync();
-            return PartialView("Edit", viewModel);
+            if (!ModelState.IsValid)
+            {
+                // Preencha a lista de cargos novamente para a View
+                viewModel.Cargos = await _cargoRepository.GetAllAsync();
+                return PartialView("Edit", viewModel);
+            }
+
+            try
+            {
+                var cargo = viewModel.CargoId.HasValue
+                            ? await _cargoRepository.GetByIdAsync(viewModel.CargoId.Value)
+                            : null;
+
+                if (viewModel.CargoId.HasValue && cargo == null)
+                {
+                    ModelState.AddModelError("CargoId", "Cargo não encontrado.");
+                    viewModel.Cargos = await _cargoRepository.GetAllAsync();
+                    return PartialView("Edit", viewModel);
+                }
+
+                await _colaboradorService.UpdateAsync(colaborador);
+                return Json(new { success = true });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _colaboradorService.ColaboradorExists(viewModel.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
 

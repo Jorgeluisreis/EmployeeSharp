@@ -93,7 +93,11 @@ else
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function (response) {
-                        location.reload();
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#editModal .modal-content').html(response);
+                        }
                     },
                     error: function (response) {
                         console.error("Erro ao salvar as alterações.");

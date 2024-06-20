@@ -21,24 +21,27 @@
             <input asp-for="Telefone" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
             <span asp-validation-for="Telefone" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="CargoId">Cargo:</label>
-            <select asp-for="CargoId" class="form-control" data-val="true" data-val-required="O campo Cargo é obrigatório.">
-                @if (Model.Cargos != null && Model.Cargos.Any())
-                {
-                    foreach (var cargo in Model.Cargos)
+
+        @if (Model.Cargos != null && Model.Cargos.Any())
+        {
+            <div class="form-group">
+                <label asp-for="CargoId">Cargo:</label>
+                <select asp-for="CargoId" class="form-control" data-val="true" data-val-required="O campo Cargo é obrigatório.">
+                    @foreach (var cargo in Model.Cargos)
                     {
                         <option value="@cargo.Id">@cargo.Nome</option>
                     }
-                }
-                else
-                {
-                    <option disabled>Nenhum cargo disponível</option>
-                }
-            </select>
-            <span asp-validation-for="CargoId" class="text-danger"></span>
-            <span id="cargoValidationMessage" class="text-danger"></span>
-        </div>
+                </select>
+                <span asp-validation-for="CargoId" class="text-danger"></span>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Não existem cargos cadastrados. Por favor, cadastre ao menos um cargo para continuar.
+            </div>
+        }
+
         <div class="text-right">
             <button type="button" class="btn btn-secondary" id="closeCreateModal">Cancelar</button>
             @if (Model.Cargos != null && Model.Cargos.Any())
