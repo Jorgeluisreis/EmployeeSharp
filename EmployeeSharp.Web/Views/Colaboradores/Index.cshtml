@@ -93,6 +93,10 @@ else
                 });
             });
 
+            $(document).on('click', '#closeEditModal', function () {
+                $('#editModal').modal('hide');
+            });
+
             // Delete button click event
             $(".delete-button").click(function () {
                 var id = $(this).data("id");
