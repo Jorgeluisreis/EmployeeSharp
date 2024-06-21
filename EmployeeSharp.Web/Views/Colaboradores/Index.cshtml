@@ -9,6 +9,8 @@
         <input type="text" id="searchInput" name="searchString" class="form-control" value="@ViewData["CurrentFilter"]" />
     </div>
     <button type="submit" class="btn btn-primary">Pesquisar</button>
+
+    <button type="button" class="btn btn-success" id="createButton">Criar Colaborador</button>
 </form>
 
 @if (Model != null && Model.Any())
@@ -33,26 +35,9 @@
                     <td class="cargo-name" data-cargo-id="@colaborador.CargoId"></td>
                     <td>
                         <button class="btn btn-info edit-button" data-id="@colaborador.Id">Editar</button>
-                        <a href="#" class="delete-link btn btn-danger" data-id="@colaborador.Id" data-nome="@colaborador.Nome">Deletar</a>
+                        <button class="btn btn-danger delete-button" data-id="@colaborador.Id" data-nome="@colaborador.Nome">Deletar</button>
                     </td>
                 </tr>
-
-                <div class="modal fade" id="deleteModal_@colaborador.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel_@colaborador.Id" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel_@colaborador.Id">Deletar Colaborador</h5>
-                            </div>
-                            <div class="modal-body" id="deleteModalContent_@colaborador.Id">
-                                <p>Tem certeza que deseja excluir o colaborador '@colaborador.Nome'?</p>
-                                <div class="text-right">
-                                    <button type="button" class="btn btn-secondary cancel-button" data-id="@colaborador.Id">Cancelar</button>
-                                    <button type="button" class="btn btn-danger confirmDelete" data-id="@colaborador.Id">Confirmar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             }
         </tbody>
     </table>
@@ -62,7 +47,24 @@ else
     <div class="alert alert-warning" role="alert">Nenhum colaborador encontrado.</div>
 }
 
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <!-- O conteúdo do modal será carregado dinamicamente -->
@@ -91,7 +93,11 @@ else
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function (response) {
-                        location.reload();
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#editModal .modal-content').html(response);
+                        }
                     },
                     error: function (response) {
                         console.error("Erro ao salvar as alterações.");
@@ -99,12 +105,19 @@ else
                 });
             });
 
-            $(".delete-link").click(function () {
-                var id = $(this).data("id");
-                $('#deleteModal_' + id).modal('show');
+            $(document).on('click', '#closeEditModal', function () {
+                $('#editModal').modal('hide');
             });
 
-            $(".confirmDelete").click(function () {
+            $(".delete-button").click(function () {
+                var id = $(this).data("id");
+                $.get('/Colaboradores/Delete/' + id, function (data) {
+                    $('#deleteModal .modal-content').html(data);
+                    $('#deleteModal').modal('show');
+                });
+            });
+
+            $(document).on('click', '.confirmDelete', function () {
                 var id = $(this).data("id");
                 $.ajax({
                     url: '/Colaboradores/DeleteConfirmed',
@@ -115,7 +128,7 @@ else
                     },
                     success: function (data) {
                         if (data.success) {
-                            $('#deleteModal_' + id).modal('hide');
+                            $('#deleteModal').modal('hide');
                             location.reload();
                         } else {
                             alert("Erro ao deletar o colaborador.");
@@ -128,29 +141,61 @@ else
                 });
             });
 
-            // Função para buscar o nome do cargo
-            function FindCargoName(cargoId) {
-                var cargoName = ""; // Inicialize uma variável para armazenar o nome do cargo
+            $(document).on('click', '#closeDeleteModal', function () {
+                $('#deleteModal').modal('hide');
+            });
 
-                // Faça uma requisição para obter o nome do cargo pelo ID
+            $("#createButton").click(function () {
+                $.get('/Colaboradores/Create', function (data) {
+                    $('#createModal .modal-content').html(data);
+                    $('#createModal').modal('show');
+                });
+            });
+
+            $("#createModal").on('submit', '#createColaboradorForm', function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = '/Colaboradores/Index';
+                        } else {
+                            $('#createModal .modal-content').html(response);
+                        }
+                    },
+                    error: function (response) {
+                        console.error("Erro ao criar o colaborador.");
+                        $('#createModal .modal-content').html(response.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '#closeCreateModal', function () {
+                $('#createModal').modal('hide');
+            });
+
+            function FindCargoName(cargoId) {
+                var cargoName = "";
+
                 $.ajax({
                     url: '/Cargos/GetCargoName/' + cargoId,
                     type: 'GET',
-                    async: false, // Defina como false para garantir que a função aguarde a resposta da requisição
+                    async: false,
                     success: function (data) {
-                        cargoName = data; // Armazene o nome do cargo retornado pela requisição na variável
+                        cargoName = data;
                     },
                     error: function () {
                         console.error("Erro ao buscar o nome do cargo.");
-                        cargoName = "Cargo não cadastrado"; // Defina o nome do cargo como "Cargo não cadastrado" em caso de erro
+                        cargoName = "Cargo não cadastrado";
                     }
                 });
 
-                // Retorne o nome do cargo, se encontrado, ou "Cargo não cadastrado" se não encontrado
                 return cargoName;
             }
 
-            // Preencher os campos de cargo na tabela
             $('.cargo-name').each(function () {
                 var cargoId = $(this).data('cargo-id');
                 $(this).text(FindCargoName(cargoId));

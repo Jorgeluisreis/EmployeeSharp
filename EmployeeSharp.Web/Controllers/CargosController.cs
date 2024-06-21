@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmployeeSharp.Application.Services;
 using EmployeeSharp.Domain.Entities;
-using System;
-using System.Threading.Tasks;
 
 namespace EmployeeSharp.Web.Controllers
 {
@@ -57,7 +55,7 @@ namespace EmployeeSharp.Web.Controllers
             if (ModelState.IsValid)
             {
                 await _cargoService.AddAsync(cargo);
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
             }
             return PartialView(cargo);
         }
@@ -84,7 +82,7 @@ namespace EmployeeSharp.Web.Controllers
             if (ModelState.IsValid)
             {
                 await _cargoService.UpdateAsync(cargo);
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
             }
             return PartialView(cargo);
         }
@@ -113,15 +111,13 @@ namespace EmployeeSharp.Web.Controllers
                 }
 
                 await _cargoService.DeleteAsync(id);
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Erro ao deletar o cargo: {ex.Message}");
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = false, message = $"Erro ao deletar o cargo: {ex.Message}" });
             }
         }
-
     }
-
 }

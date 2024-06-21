@@ -3,9 +3,9 @@ using EmployeeSharp.Application.Services;
 using EmployeeSharp.Domain.Entities;
 using EmployeeSharp.Web.Models;
 using EmployeeSharp.Domain.Interfaces;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using EmployeeSharp.Application.Validators;
+using FluentValidation;
 
 namespace EmployeeSharp.Web.Controllers
 {
@@ -13,11 +13,13 @@ namespace EmployeeSharp.Web.Controllers
     {
         private readonly ColaboradorService _colaboradorService;
         private readonly ICargoRepository _cargoRepository;
+        private readonly ColaboradorValidator _colaboradorValidator;
 
-        public ColaboradoresController(ColaboradorService colaboradorService, ICargoRepository cargoRepository)
+        public ColaboradoresController(ColaboradorService colaboradorService, ICargoRepository cargoRepository, ColaboradorValidator colaboradorValidator)
         {
             _colaboradorService = colaboradorService;
             _cargoRepository = cargoRepository;
+            _colaboradorValidator = colaboradorValidator;
         }
 
         // GET: /Colaboradores/Index
@@ -41,31 +43,19 @@ namespace EmployeeSharp.Web.Controllers
             {
                 Cargos = cargos
             };
-            return View(viewModel);
+            return PartialView("Create", viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ColaboradorViewModel colaboradorViewModel)
         {
+
             colaboradorViewModel.Cargos = await _cargoRepository.GetAllAsync();
-
-            if (colaboradorViewModel.CargoId == null)
-            {
-                ModelState.AddModelError("CargoId", "O campo Cargo é obrigatório.");
-                return View(colaboradorViewModel);
-            }
-
-            var cargo = colaboradorViewModel.Cargos.FirstOrDefault(c => c.Id == colaboradorViewModel.CargoId);
-
-            if (cargo == null)
-            {
-                ModelState.AddModelError("CargoId", "Cargo não encontrado.");
-                return View(colaboradorViewModel);
-            }
 
             if (ModelState.IsValid)
             {
+
                 var colaborador = new Colaborador
                 {
                     Nome = colaboradorViewModel.Nome,
@@ -74,11 +64,26 @@ namespace EmployeeSharp.Web.Controllers
                     CargoId = colaboradorViewModel.CargoId
                 };
 
+                var validationResult = await _colaboradorValidator.ValidateAsync(colaborador);
+
+                if (!validationResult.IsValid)
+                {
+
+                    foreach (var error in validationResult.Errors)
+                    {
+                        ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    }
+
+                    return PartialView("Create", colaboradorViewModel);
+                }
+
                 await _colaboradorService.AddAsync(colaborador);
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
             }
-            return View(colaboradorViewModel);
+
+            return PartialView("Create", colaboradorViewModel);
         }
+
 
 
         // GET: /Colaboradores/Edit/5
@@ -115,48 +120,61 @@ namespace EmployeeSharp.Web.Controllers
                 return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            viewModel.Cargos = await _cargoRepository.GetAllAsync();
+
+
+            var colaborador = new Colaborador
             {
-                try
+                Id = viewModel.Id,
+                Nome = viewModel.Nome,
+                Email = viewModel.Email,
+                Telefone = viewModel.Telefone,
+                CargoId = viewModel.CargoId ?? 0
+            };
+
+            var validationResult = await _colaboradorValidator.ValidateAsync(colaborador);
+            if (!validationResult.IsValid)
+            {
+                foreach (var error in validationResult.Errors)
                 {
-                    var cargo = viewModel.CargoId.HasValue
-                                ? await _cargoRepository.GetByIdAsync(viewModel.CargoId.Value)
-                                : null;
-
-                    if (viewModel.CargoId.HasValue && cargo == null)
-                    {
-                        ModelState.AddModelError("CargoId", "Cargo não encontrado.");
-                        viewModel.Cargos = await _cargoRepository.GetAllAsync();
-                        return PartialView("Edit", viewModel);
-                    }
-
-                    var colaborador = new Colaborador
-                    {
-                        Id = viewModel.Id,
-                        Nome = viewModel.Nome,
-                        Email = viewModel.Email,
-                        Telefone = viewModel.Telefone,
-                        CargoId = viewModel.CargoId 
-                    };
-
-                    await _colaboradorService.UpdateAsync(colaborador);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await _colaboradorService.ColaboradorExists(viewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 }
             }
 
-            viewModel.Cargos = await _cargoRepository.GetAllAsync();
-            return PartialView("Edit", viewModel);
+            if (!ModelState.IsValid)
+            {
+                // Preencha a lista de cargos novamente para a View
+                viewModel.Cargos = await _cargoRepository.GetAllAsync();
+                return PartialView("Edit", viewModel);
+            }
+
+            try
+            {
+                var cargo = viewModel.CargoId.HasValue
+                            ? await _cargoRepository.GetByIdAsync(viewModel.CargoId.Value)
+                            : null;
+
+                if (viewModel.CargoId.HasValue && cargo == null)
+                {
+                    ModelState.AddModelError("CargoId", "Cargo não encontrado.");
+                    viewModel.Cargos = await _cargoRepository.GetAllAsync();
+                    return PartialView("Edit", viewModel);
+                }
+
+                await _colaboradorService.UpdateAsync(colaborador);
+                return Json(new { success = true });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _colaboradorService.ColaboradorExists(viewModel.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
 
@@ -169,7 +187,7 @@ namespace EmployeeSharp.Web.Controllers
             {
                 return NotFound();
             }
-            return View(colaborador);
+            return PartialView("Delete", colaborador);
         }
 
         // POST: /Colaboradores/DeleteConfirmed

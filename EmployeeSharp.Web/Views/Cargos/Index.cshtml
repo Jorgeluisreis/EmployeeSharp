@@ -109,7 +109,11 @@ else
                     type: method,
                     data: data,
                     success: function (response) {
-                        location.reload();
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#createModal .modal-content').html(response);
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error("Erro ao criar o cargo:", error);
@@ -131,7 +135,11 @@ else
                     type: method,
                     data: data,
                     success: function (response) {
-                        location.reload();
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#editModal .modal-content').html(response);
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error("Erro ao editar o cargo:", error);
@@ -153,7 +161,11 @@ else
                     type: method,
                     data: data,
                     success: function (response) {
-                        location.reload();
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error("Erro ao deletar o cargo:", error);

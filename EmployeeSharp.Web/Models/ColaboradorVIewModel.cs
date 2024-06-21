@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 using EmployeeSharp.Domain.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployeeSharp.Web.Models
 {
@@ -21,6 +19,7 @@ namespace EmployeeSharp.Web.Models
         public string Telefone { get; set; }
 
         [Display(Name = "Cargo")]
+        [Required(ErrorMessage = "O campo Cargo é obrigatório.")]
         public int? CargoId { get; set; }
 
         public IEnumerable<Cargo> Cargos { get; set; }
