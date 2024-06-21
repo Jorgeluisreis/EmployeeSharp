@@ -60,7 +60,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     }
     else
     {
-        serverOptions.ListenAnyIP(2506);
+        serverOptions.ListenAnyIP(2041);
     }
 });
 
