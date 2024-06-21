@@ -30,7 +30,7 @@ var config = new ConfigurationBuilder()
 var connectionString = config["ConnectionStrings:DefaultConnection"];
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("A string de conex„o 'DefaultConnection' n„o foi encontrada.");
+    throw new InvalidOperationException("A string de conex√£o 'DefaultConnection' n√£o foi encontrada.");
 }
 
 builder.Services.AddDbContext<EmployeeSharpContext>(options =>
