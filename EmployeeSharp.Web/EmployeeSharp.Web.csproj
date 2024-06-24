@@ -9,6 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\js\NovaPasta1\**" />
+    <Compile Remove="wwwroot\js\NovaPasta\**" />
+    <Content Remove="wwwroot\js\NovaPasta1\**" />
+    <Content Remove="wwwroot\js\NovaPasta\**" />
+    <EmbeddedResource Remove="wwwroot\js\NovaPasta1\**" />
+    <EmbeddedResource Remove="wwwroot\js\NovaPasta\**" />
+    <None Remove="wwwroot\js\NovaPasta1\**" />
+    <None Remove="wwwroot\js\NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\js\Views\newFile.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
