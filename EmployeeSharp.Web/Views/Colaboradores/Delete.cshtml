@@ -2,11 +2,12 @@
 
 <div class="modal-header">
     <h5 class="modal-title">Deletar Colaborador</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
     <p>Tem certeza que deseja excluir o colaborador '@Model.Nome'?</p>
-    <div class="text-right">
-        <button type="button" class="btn btn-secondary" id="closeDeleteModal">Cancelar</button>
-        <button type="button" class="btn btn-danger confirmDelete" data-id="@Model.Id">Confirmar</button>
-    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="button" class="btn btn-danger confirmDelete" data-id="@Model.Id">Confirmar</button>
 </div>

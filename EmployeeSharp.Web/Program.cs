@@ -1,11 +1,4 @@
-using EmployeeSharp.Infra.Data;
-using EmployeeSharp.Domain.Interfaces;
-using EmployeeSharp.Infra.Data.Repositories;
-using EmployeeSharp.Application.Services;
-using Microsoft.EntityFrameworkCore;
-using EmployeeSharp.Application.Validators;
-using FluentValidation.AspNetCore;
-using FluentValidation;
+using EmployeeSharp.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,42 +20,8 @@ var config = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
     .Build();
 
-var connectionString = config["ConnectionStrings:DefaultConnection"];
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("A string de conexão 'DefaultConnection' não foi encontrada.");
-}
-
-builder.Services.AddDbContext<EmployeeSharpContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0))));
-
-builder.Services.AddScoped<IColaboradorRepository, ColaboradorRepository>();
-builder.Services.AddScoped<ICargoRepository, CargoRepository>();
-builder.Services.AddScoped<ColaboradorService>();
-builder.Services.AddScoped<CargoService>();
-
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-builder.Services.AddTransient<ColaboradorValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CargoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<ColaboradorValidator>();
-
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    if (builder.Environment.IsDevelopment())
-    {
-        serverOptions.ListenAnyIP(5000);
-        serverOptions.ListenAnyIP(5001, listenOptions =>
-        {
-            listenOptions.UseHttps();
-        });
-    }
-    else
-    {
-        serverOptions.ListenAnyIP(2041);
-    }
-});
+builder.Services.ConfigureServices(config);
+builder.WebHost.ConfigureKestrelServer();
 
 var app = builder.Build();
 

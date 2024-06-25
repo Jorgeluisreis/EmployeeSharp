@@ -4,18 +4,17 @@
 
 <form asp-controller="Colaboradores" asp-action="Index" method="get">
     @Html.AntiForgeryToken()
-    <div class="form-group">
-        <label for="searchInput">Pesquisar por Nome:</label>
+    <div class="mb-3">
+        <label for="searchInput" class="form-label">Pesquisar por Nome:</label>
         <input type="text" id="searchInput" name="searchString" class="form-control" value="@ViewData["CurrentFilter"]" />
     </div>
-    <button type="submit" class="btn btn-primary">Pesquisar</button>
-
-    <button type="button" class="btn btn-success" id="createButton">Criar Colaborador</button>
+    <button type="submit" class="btn btn-primary mb-3">Pesquisar</button>
+    <button type="button" class="btn btn-success mb-3" id="createButton">Criar Colaborador</button>
 </form>
 
 @if (Model != null && Model.Any())
 {
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Nome</th>
@@ -31,7 +30,7 @@
                 <tr>
                     <td>@colaborador.Nome</td>
                     <td>@colaborador.Email</td>
-                    <td>@colaborador.Telefone</td>
+                    <td class="telefone">@colaborador.Telefone</td>
                     <td class="cargo-name" data-cargo-id="@colaborador.CargoId"></td>
                     <td>
                         <button class="btn btn-info edit-button" data-id="@colaborador.Id">Editar</button>
@@ -47,25 +46,24 @@ else
     <div class="alert alert-warning" role="alert">Nenhum colaborador encontrado.</div>
 }
 
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <!-- O conteúdo do modal será carregado dinamicamente -->
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <!-- O conteúdo do modal será carregado dinamicamente -->
         </div>
     </div>
 </div>
 
-
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <!-- O conteúdo do modal será carregado dinamicamente -->
         </div>
@@ -73,40 +71,96 @@ else
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $(document).ready(function () {
-            $(".edit-button").click(function () {
-                var id = $(this).data("id");
-                $.get('/Colaboradores/Edit/' + id, function (data) {
-                    $('#editModal .modal-content').html(data);
-                    $('#editModal').modal('show');
+            $(".telefone").mask("(00) 00000-0000");
+
+            $("#createButton").click(function () {
+                $.get('/Colaboradores/Create', function (data) {
+                    $('#createModal .modal-content').html(data);
+                    $('#createModal').modal('show');
+
+                    $('#createModal').on('shown.bs.modal', function () {
+                        $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                    });
                 });
             });
 
-            $("#editModal").on('submit', '#editColaboradorForm', function (event) {
+            $("#createModal").on('submit', '#createColaboradorForm', function (event) {
                 event.preventDefault();
                 var form = $(this);
+
+                var telefoneInput = $("#telefoneInput");
+                var telefone = telefoneInput.val().replace(/\D/g, '');
+                telefoneInput.val(telefone);
+
                 $.ajax({
                     url: form.attr("action"),
                     type: form.attr("method"),
                     data: form.serialize(),
                     success: function (response) {
                         if (response.success) {
-                            location.reload();
+                            window.location.href = '/Colaboradores/Index';
                         } else {
-                            $('#editModal .modal-content').html(response);
+                            $('#createModal .modal-content').html(response);
+
+                            $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
                         }
                     },
                     error: function (response) {
-                        console.error("Erro ao salvar as alterações.");
+                        console.error("Erro ao criar o colaborador.");
+                        $('#createModal .modal-content').html(response.responseText);
+
+                        $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
                     }
                 });
             });
 
-            $(document).on('click', '#closeEditModal', function () {
-                $('#editModal').modal('hide');
+            $(".edit-button").click(function () {
+                var id = $(this).data("id");
+                $.get('/Colaboradores/Edit/' + id, function (data) {
+                    $('#editModal .modal-content').html(data);
+                    $('#editModal').modal('show');
+
+                    $('#editModal').on('shown.bs.modal', function () {
+                        $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+
+                    });
+                });
+
+                $("#editModal").on('submit', '#editColaboradorForm', function (event) {
+                    event.preventDefault();
+                    var form = $(this);
+
+                    var telefoneInput = $("#telefoneInput");
+                    var telefone = telefoneInput.val().replace(/\D/g, '');
+                    telefoneInput.val(telefone);
+
+                    $.ajax({
+                        url: form.attr("action"),
+                        type: form.attr("method"),
+                        data: form.serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                $('#editModal .modal-content').html(response);
+
+                                $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                            }
+                        },
+                        error: function (response) {
+                            console.error("Erro ao salvar as alterações.");
+
+                            $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                        }
+                    });
+                });
+
+
             });
 
             $(".delete-button").click(function () {
@@ -141,18 +195,7 @@ else
                 });
             });
 
-            $(document).on('click', '#closeDeleteModal', function () {
-                $('#deleteModal').modal('hide');
-            });
-
-            $("#createButton").click(function () {
-                $.get('/Colaboradores/Create', function (data) {
-                    $('#createModal .modal-content').html(data);
-                    $('#createModal').modal('show');
-                });
-            });
-
-            $("#createModal").on('submit', '#createColaboradorForm', function (event) {
+            $("#deleteModal").on('submit', '#deleteColaboradorForm', function (event) {
                 event.preventDefault();
                 var form = $(this);
                 $.ajax({
@@ -161,25 +204,20 @@ else
                     data: form.serialize(),
                     success: function (response) {
                         if (response.success) {
-                            window.location.href = '/Colaboradores/Index';
+                            $('#deleteModal').modal('hide');
+                            location.reload();
                         } else {
-                            $('#createModal .modal-content').html(response);
+                            alert("Erro ao deletar o colaborador.");
                         }
                     },
                     error: function (response) {
-                        console.error("Erro ao criar o colaborador.");
-                        $('#createModal .modal-content').html(response.responseText);
+                        console.error("Erro ao deletar o colaborador.");
                     }
                 });
             });
 
-            $(document).on('click', '#closeCreateModal', function () {
-                $('#createModal').modal('hide');
-            });
-
             function FindCargoName(cargoId) {
                 var cargoName = "";
-
                 $.ajax({
                     url: '/Cargos/GetCargoName/' + cargoId,
                     type: 'GET',
@@ -192,7 +230,6 @@ else
                         cargoName = "Cargo não cadastrado";
                     }
                 });
-
                 return cargoName;
             }
 
