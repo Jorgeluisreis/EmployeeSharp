@@ -18,6 +18,10 @@ namespace EmployeeSharp.Application.Validators
             RuleFor(colaborador => colaborador.Telefone)
                 .NotEmpty().WithMessage("O telefone do colaborador é obrigatório.")
                 .Matches(@"^\d{11}$").WithMessage("O telefone do colaborador deve conter exatamente 11 números.");
+
+            RuleFor(colaborador => colaborador.CargoId)
+                .NotNull().WithMessage("Por favor, selecione um cargo válido.");
         }
+
     }
 }

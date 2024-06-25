@@ -84,9 +84,38 @@ else
                     $('#createModal').modal('show');
 
                     $('#createModal').on('shown.bs.modal', function () {
-                        $("#telefoneInput").mask("(00) 00000-0000", {placeholder: "(__) _____-____"});
-
+                        $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
                     });
+                });
+            });
+
+            $("#createModal").on('submit', '#createColaboradorForm', function (event) {
+                event.preventDefault();
+                var form = $(this);
+
+                var telefoneInput = $("#telefoneInput");
+                var telefone = telefoneInput.val().replace(/\D/g, '');
+                telefoneInput.val(telefone);
+
+                $.ajax({
+                    url: form.attr("action"),
+                    type: form.attr("method"),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = '/Colaboradores/Index';
+                        } else {
+                            $('#createModal .modal-content').html(response);
+
+                            $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                        }
+                    },
+                    error: function (response) {
+                        console.error("Erro ao criar o colaborador.");
+                        $('#createModal .modal-content').html(response.responseText);
+
+                        $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                    }
                 });
             });
 
@@ -102,6 +131,35 @@ else
                     });
                 });
 
+                $("#editModal").on('submit', '#editColaboradorForm', function (event) {
+                    event.preventDefault();
+                    var form = $(this);
+
+                    var telefoneInput = $("#telefoneInput");
+                    var telefone = telefoneInput.val().replace(/\D/g, '');
+                    telefoneInput.val(telefone);
+
+                    $.ajax({
+                        url: form.attr("action"),
+                        type: form.attr("method"),
+                        data: form.serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                $('#editModal .modal-content').html(response);
+
+                                $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                            }
+                        },
+                        error: function (response) {
+                            console.error("Erro ao salvar as alterações.");
+
+                            $("#telefoneInput").mask("(00) 00000-0000", { placeholder: "(__) _____-____" });
+                        }
+                    });
+                });
+
 
             });
 
@@ -113,43 +171,26 @@ else
                 });
             });
 
-            $("#createModal").on('submit', '#createColaboradorForm', function (event) {
-                event.preventDefault();
-                var form = $(this);
+            $(document).on('click', '.confirmDelete', function () {
+                var id = $(this).data("id");
                 $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    success: function (response) {
-                        if (response.success) {
-                            window.location.href = '/Colaboradores/Index';
-                        } else {
-                            $('#createModal .modal-content').html(response);
-                        }
+                    url: '/Colaboradores/DeleteConfirmed',
+                    type: 'POST',
+                    data: { id: id },
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                     },
-                    error: function (response) {
-                        console.error("Erro ao criar o colaborador.");
-                        $('#createModal .modal-content').html(response.responseText);
-                    }
-                });
-            });
-
-            $("#editModal").on('submit', '#editColaboradorForm', function (event) {
-                event.preventDefault();
-                var form = $(this);
-                $.ajax({
-                    url: form.attr("action"),
-                    type: form.attr("method"),
-                    data: form.serialize(),
-                    success: function (response) {
-                        if (response.success) {
+                    success: function (data) {
+                        if (data.success) {
+                            $('#deleteModal').modal('hide');
                             location.reload();
                         } else {
-                            $('#editModal .modal-content').html(response);
+                            alert("Erro ao deletar o colaborador.");
                         }
                     },
-                    error: function (response) {
-                        console.error("Erro ao salvar as alterações.");
+                    error: function (error) {
+                        console.error(error);
+                        alert("Erro ao deletar o colaborador.");
                     }
                 });
             });

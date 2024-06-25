@@ -53,3 +53,16 @@
         </div>
     </form>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('#createColaboradorForm').addEventListener('submit', function (event) {
+                var cargoId = document.querySelector('select[name="CargoId"]').value;
+                if (!cargoId) {
+                    document.getElementById('cargoValidationMessage').innerText = 'Por favor, selecione um cargo válido.';
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+}
