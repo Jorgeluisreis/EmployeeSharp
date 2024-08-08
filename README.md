@@ -9,6 +9,7 @@ O objetivo do EmployeeSharp é fornecer uma aplicação web robusta e escalável
 ## 🛠️ Tecnologias Utilizadas
 
 - ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-8.0-blue) - Framework para desenvolvimento web
+- ![MySQL](https://img.shields.io/badge/MySQL-9.0.1-blue) - Banco de Dados MySQL
 - ![Entity Framework Core](https://img.shields.io/badge/Entity_Framework_Core-8.0.6-blue) - ORM para acesso ao banco de dados
 - ![Pomelo MySQL](https://img.shields.io/badge/Pomelo_MySQL-8.0.2-blue) - Provedor MySQL para Entity Framework Core
 - ![Docker](https://img.shields.io/badge/Docker-19.03.8-blue) - Ferramenta de containerização para desenvolver e implantar aplicativos
