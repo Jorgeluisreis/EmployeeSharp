@@ -1,0 +1,59 @@
+﻿@model EmployeeSharp.Web.Models.ColaboradorViewModel
+
+<form id="editColaboradorForm" asp-action="Edit" asp-controller="Colaboradores" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="modal-header">
+        <h5 class="modal-title">Editar Colaborador</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label">Nome:</label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email:</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Telefone" class="form-label">Telefone:</label>
+            <input asp-for="Telefone" id="telefoneInput" class="form-control" />
+            <span asp-validation-for="Telefone" class="text-danger"></span>
+        </div>
+
+        @if (Model.Cargos.Any())
+        {
+            <div class="mb-3">
+                <label asp-for="CargoId" class="form-label">Cargo:</label>
+                <select asp-for="CargoId" class="form-control">
+                    @foreach (var cargo in Model.Cargos)
+                    {
+                        <option value="@cargo.Id">@cargo.Nome</option>
+                    }
+                </select>
+                <span asp-validation-for="CargoId" class="text-danger"></span>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Não existem cargos cadastrados. Por favor, cadastre ao menos um cargo para continuar.
+            </div>
+        }
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        @if (Model.Cargos.Any())
+        {
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        }
+    </div>
+</form>

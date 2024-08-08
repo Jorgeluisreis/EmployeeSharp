@@ -1,0 +1,71 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+#editModal {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.cargo-form-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.cargo-form-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cargo-form-group {
+    margin-bottom: 20px;
+}
+
+.cargo-form-label {
+    font-weight: bold;
+}
+
+.cargo-form-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.cargo-form-submit-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.footer {
+    padding: 1rem 0;
+    background-color: #f8f9fa;
+}

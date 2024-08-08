@@ -1,0 +1,68 @@
+﻿@model EmployeeSharp.Web.Models.ColaboradorViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Criar Novo Colaborador</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form id="createColaboradorForm" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label">Nome:</label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email:</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Telefone" class="form-label">Telefone:</label>
+            <input asp-for="Telefone" id="telefoneInput" class="form-control" />
+            <span asp-validation-for="Telefone" class="text-danger"></span>
+        </div>
+
+        @if (Model.Cargos != null && Model.Cargos.Any())
+        {
+            <div class="mb-3">
+                <label asp-for="CargoId" class="form-label">Cargo:</label>
+                <select asp-for="CargoId" class="form-control">
+                    <option value="">Escolha o cargo</option>
+                    @foreach (var cargo in Model.Cargos)
+                    {
+                        <option value="@cargo.Id">@cargo.Nome</option>
+                    }
+                </select>
+                <span asp-validation-for="CargoId" class="text-danger"></span>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Não existem cargos cadastrados. Por favor, cadastre ao menos um cargo para continuar.
+            </div>
+        }
+
+        <div class="text-end">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            @if (Model.Cargos != null && Model.Cargos.Any())
+            {
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            }
+        </div>
+    </form>
+</div>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('#createColaboradorForm').addEventListener('submit', function (event) {
+                var cargoId = document.querySelector('select[name="CargoId"]').value;
+                if (!cargoId) {
+                    document.getElementById('cargoValidationMessage').innerText = 'Por favor, selecione um cargo válido.';
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+}

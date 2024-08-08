@@ -1,0 +1,181 @@
+﻿@model IEnumerable<EmployeeSharp.Domain.Entities.Cargo>
+
+<h1 class="my-4">Lista de Cargos</h1>
+
+<button id="btnAddCargo" class="btn btn-primary mb-3">Adicionar Novo Cargo</button>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cargo in Model)
+            {
+                <tr>
+                    <td>@cargo.Nome</td>
+                    <td>
+                        <button class="btn btn-info edit-button" data-id="@cargo.Id">Editar</button>
+                        <button class="btn btn-danger delete-button" data-id="@cargo.Id">Deletar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">Nenhum cargo encontrado.</div>
+}
+
+<!-- Modal de Criação -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Deleção -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- O conteúdo do modal será carregado dinamicamente -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-..." crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $("#btnAddCargo").click(function () {
+                $.get('/Cargos/Create', function (data) {
+                    $('#createModal .modal-content').html(data);
+                    $('#createModal').modal('show');
+                });
+            });
+
+            $(".edit-button").click(function () {
+                var id = $(this).data("id");
+                $.get('/Cargos/Edit/' + id, function (data) {
+                    $('#editModal .modal-content').html(data);
+                    $('#editModal').modal('show');
+                });
+            });
+
+            $(".delete-button").click(function () {
+                var id = $(this).data("id");
+                $.get('/Cargos/Delete/' + id, function (data) {
+                    $('#deleteModal .modal-content').html(data);
+                    $('#deleteModal').modal('show');
+                });
+            });
+
+            $("#createModal").on('click', '#cancelCreateButton', function () {
+                $('#createModal').modal('hide');
+            });
+
+            $("#editModal").on('click', '#cancelEditButton', function () {
+                $('#editModal').modal('hide');
+            });
+
+            $("#deleteModal").on('click', '#cancelDeleteButton', function () {
+                $('#deleteModal').modal('hide');
+            });
+
+            $("#createModal").on('submit', '#createCargoForm', function (event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var url = form.attr("action");
+                var method = form.attr("method");
+                var data = form.serialize();
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: data,
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#createModal .modal-content').html(response);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Erro ao criar o cargo:", error);
+                        alert("Erro ao criar o cargo. Por favor, tente novamente.");
+                    }
+                });
+            });
+
+            $("#editModal").on('submit', '#editCargoForm', function (event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var url = form.attr("action");
+                var method = form.attr("method");
+                var data = form.serialize();
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: data,
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#editModal .modal-content').html(response);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Erro ao editar o cargo:", error);
+                        alert("Erro ao editar o cargo. Por favor, tente novamente.");
+                    }
+                });
+            });
+
+            $("#deleteModal").on('submit', '#deleteCargoForm', function (event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var url = form.attr("action");
+                var method = form.attr("method");
+                var data = form.serialize();
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: data,
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Erro ao deletar o cargo:", error);
+                        alert("Erro ao deletar o cargo. Por favor, tente novamente.");
+                    }
+                });
+            });
+        });
+    </script>
+}
