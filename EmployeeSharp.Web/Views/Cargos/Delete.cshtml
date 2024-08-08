@@ -1,0 +1,16 @@
+﻿@model EmployeeSharp.Domain.Entities.Cargo
+
+<div class="modal-header">
+    <h5 class="modal-title" id="deleteModalLabel">Deletar Cargo</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <p>Tem certeza que deseja excluir o cargo '@Model.Nome'?</p>
+    <form id="deleteCargoForm" asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="modal-footer">
+            <button type="button" id="cancelDeleteButton" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+        </div>
+    </form>
+</div>

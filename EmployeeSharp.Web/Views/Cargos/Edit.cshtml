@@ -1,0 +1,20 @@
+﻿@model EmployeeSharp.Domain.Entities.Cargo
+
+<div class="modal-header">
+    <h5 class="modal-title" id="editModalLabel">Editar Cargo</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form id="editCargoForm" asp-action="Edit" method="post" data-ajax="true" data-ajax-method="POST">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label asp-for="Nome" class="form-label">Nome:</label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelEditButton" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </form>
+</div>
