@@ -26,4 +26,4 @@ O objetivo do EmployeeSharp é fornecer uma aplicação web robusta e escalável
 
 ## 🌐 Acesso ao Projeto
 
-A aplicação EmployeeSharp pode ser acessada pelo link [employeesharp.jorgedev.net](http://employeesharp.jorgedev.net).
+A aplicação EmployeeSharp pode ser acessada clicando [aqui](http://employeesharp.jorgedev.net).
